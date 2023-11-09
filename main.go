@@ -24,7 +24,7 @@ func main() {
 
 		if msg.Ref == "refs/heads/main" {
 
-			cmd_path := msg.Repository.Name + ".sh"
+			cmd_path := "./" + msg.Repository.Name + ".sh"
 
 			if len(cmd_path) > 0 {
 				cmd := exec.Command(cmd_path)
