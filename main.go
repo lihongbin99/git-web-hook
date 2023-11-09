@@ -1,9 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
+	"time"
 )
 
 func main() {
@@ -13,8 +17,26 @@ func main() {
 			return
 		}
 
-		fmt.Print("\n\n", string(data), "\n\n")
+		fmt.Print("\n\n", time.Now(), string(data), "\n\n")
+
+		msg := GitMsg{}
+		json.Unmarshal(data, &msg)
+
+		if msg.Ref == "refs/heads/main" {
+
+			cmd_path := msg.Repository.Name + ".sh"
+
+			if len(cmd_path) > 0 {
+				cmd := exec.Command(cmd_path)
+				cmd.Stdout = os.Stdout
+				if err := cmd.Run(); err != nil {
+					fmt.Println(err)
+				}
+			}
+
+		}
 	})
 
+	fmt.Println("启动成功...")
 	http.ListenAndServe(":13520", nil)
 }
